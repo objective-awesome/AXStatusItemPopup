@@ -4,6 +4,15 @@
 
 ![equation](http://schuch.me/github/AXStatusItemPopup/demo.png "AXStatusItemPopup")
 
+## Why another StatusItem using NSPopover?
+
+There are many projects like this here on Github. But none of them (at least I didn't found) was really usable. TextFields weren't working, application focus wasn't handled correctly.
+
+What's different here?
+* The NSPopover becomes First Responder when it's opened. This means that TextField or similar things are no longer a problem.
+* The App's main menu is hidden when the Popover is open.
+* The app, who had the user focus before he opens the popover gets its focus back after closing the popover.
+
 ## Installation
 
 Simply drag and drop the .h and .m file from the ```AXStatusItemPopup``` into your project.
