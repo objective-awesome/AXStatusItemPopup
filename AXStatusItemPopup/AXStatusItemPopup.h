@@ -16,13 +16,13 @@
 
 @optional
 
-- (BOOL) shouldPopupOpen;
-- (void) popupWillOpen;
-- (void) popupDidOpen;
+- (BOOL)shouldPopupOpen;
+- (void)popupWillOpen;
+- (void)popupDidOpen;
 
-- (BOOL) shouldPopupClose;
-- (void) popupWillClose;
-- (void) popupDidClose;
+- (BOOL)shouldPopupClose;
+- (void)popupWillClose;
+- (void)popupDidClose;
 
 @end
 

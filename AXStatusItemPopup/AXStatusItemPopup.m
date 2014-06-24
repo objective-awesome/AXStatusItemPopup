@@ -11,7 +11,7 @@
 #define kMinViewWidth 22
 
 BOOL shouldBecomeKeyWindow;
-NSWindow* windowToOverride;
+NSWindow *windowToOverride;
 
 //
 // Private properties
@@ -25,34 +25,34 @@ NSWindow* windowToOverride;
 
 @end
 
-    //#####################################################################################
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Implementation AXStatusItemPopup
-    //#####################################################################################
+/////////////////////////////////////////////////////////////////////////////////////
 
 @implementation AXStatusItemPopup
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Allocators
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
-+ (id) statusItemPopupWithViewController:(NSViewController *)controller
++ (id)statusItemPopupWithViewController:(NSViewController *)controller
 {
     return [[self alloc] initWithViewController:controller];
 }
 
-+ (id) statusItemPopupWithViewController:(NSViewController *)controller image:(NSImage *)image
++ (id)statusItemPopupWithViewController:(NSViewController *)controller image:(NSImage *)image
 {
     return [[self alloc] initWithViewController:controller image:image];
 }
 
-+ (id) statusItemPopupWithViewController:(NSViewController *)controller image:(NSImage *)image alternateImage:(NSImage *)alternateImage
++ (id)statusItemPopupWithViewController:(NSViewController *)controller image:(NSImage *)image alternateImage:(NSImage *)alternateImage
 {
     return [[self alloc] initWithViewController:controller image:image alternateImage:alternateImage];
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Initiators
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (id)initWithViewController:(NSViewController *)controller
 {
@@ -69,8 +69,7 @@ NSWindow* windowToOverride;
     CGFloat height = [NSStatusBar systemStatusBar].thickness;
     
     self = [super initWithFrame:NSMakeRect(0, 0, kMinViewWidth, height)];
-    if (self)
-    {
+    if (self) {
         _active = NO;
         _animated = YES;
         _viewController = controller;
@@ -95,19 +94,19 @@ NSWindow* windowToOverride;
         
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:nil];
     }
+    
     return self;
 }
 
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Drawing
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     // set view background color
-    if (self.isActive)
-    {
+    if (self.isActive) {
         [[NSColor selectedMenuItemColor] setFill];
     } else {
         [[NSColor clearColor] setFill];
@@ -119,18 +118,18 @@ NSWindow* windowToOverride;
     _imageView.image = image;
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Mouse Events
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
     [self togglePopover];
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Setter
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (void)setActive:(BOOL)active
 {
@@ -155,44 +154,43 @@ NSWindow* windowToOverride;
     [self updateViewFrame];
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Notification Handler
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (void)applicationDidResignActive:(NSNotification*)note
 {
     [self hidePopover];
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Popover Delegate
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
     //This is safer then caring for the sended events. Sometimes to popup doesn't close, in these
     //cases popover and status item became out of sync
-- (void) popoverWillShow: (NSNotification*) note
+- (void)popoverWillShow: (NSNotification*) note
 {
     self.active = YES;
 }
 
-- (void) popoverWillClose: (NSNotification*) note
+- (void)popoverWillClose: (NSNotification*) note
 {
     self.active = NO;
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Show / Hide Popover
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
-- (void) togglePopover
+- (void)togglePopover
 {
     [self togglePopoverAnimated:self.isAnimated];
 }
 
-- (void) togglePopoverAnimated:(BOOL)animated
+- (void)togglePopoverAnimated:(BOOL)animated
 {
-    if (self.isActive)
-    {
+    if (self.isActive) {
         [self hidePopover];
     } else {
         [self showPopoverAnimated:animated];
@@ -207,10 +205,9 @@ NSWindow* windowToOverride;
 - (void)showPopoverAnimated:(BOOL)animated
 {
     BOOL willAnswer = [self.delegate respondsToSelector:@selector(shouldPopupOpen)];
-    if (!willAnswer || (willAnswer && [self.delegate shouldPopupOpen]))
-    {
-        if (!self.popover.isShown)
-        {
+    
+    if (!willAnswer || (willAnswer && [self.delegate shouldPopupOpen])) {
+        if (!self.popover.isShown) {
             _popover.animates = animated;
             if ([self.delegate respondsToSelector:@selector(popupWillOpen)])
             {
@@ -218,9 +215,10 @@ NSWindow* windowToOverride;
             }
             [_popover showRelativeToRect:self.frame ofView:self preferredEdge:NSMinYEdge];
         }
+        
         [self.window makeKeyWindow];
-        if ([self.delegate respondsToSelector:@selector(popupDidOpen)])
-        {
+        
+        if ([self.delegate respondsToSelector:@selector(popupDidOpen)]) {
             [self.delegate popupDidOpen];
         }
     }
@@ -229,26 +227,26 @@ NSWindow* windowToOverride;
 - (void)hidePopover
 {
     BOOL willAnswer = [self.delegate respondsToSelector:@selector(shouldPopupClose)];
-    if (!willAnswer || (willAnswer && [self.delegate shouldPopupClose]))
-    {
+    
+    if (!willAnswer || (willAnswer && [self.delegate shouldPopupClose])) {
         if (_popover && _popover.isShown)
         {
-            if ([self.delegate respondsToSelector:@selector(popupWillClose)])
-            {
+            if ([self.delegate respondsToSelector:@selector(popupWillClose)]) {
                 [self.delegate popupWillClose];
             }
+            
             [_popover close];
         }
-        if ([self.delegate respondsToSelector:@selector(popupDidClose)])
-        {
+        
+        if ([self.delegate respondsToSelector:@selector(popupDidClose)]) {
             [self.delegate popupDidClose];
         }
     }
 }
 
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Helper
-    //*******************************************************************************
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (void)updateViewFrame
 {
@@ -264,9 +262,9 @@ NSWindow* windowToOverride;
 
 @end
 
-    //#####################################################################################
+///////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Implementation NSWindow+canBecomeKeyWindow
-    //#####################################################################################
+///////////////////////////////////////////////////////////////////////////////////////////
 
 #import <objc/objc-class.h>
 
